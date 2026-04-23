@@ -1,0 +1,43 @@
+name: Maven Build
+description: Composite GitHub Action that verifies a Maven Build.
+
+inputs:
+  java-version:
+    description: Java version
+    required: true
+  java-distribution:
+    description: Java distribution
+    required: false
+    default: temurin
+  maven-executable:
+    description: Maven executable
+    required: false
+    default: mvn    
+  maven-verify-args:
+    description: Maven goals and command line parameter to verify the build
+    required: false
+    default: -s ./.maven-settings.xml -Pcontinuous-integration -B -U clean verify
+  maven-additional-args:
+    description: Additional maven goals or command line parameters to be added to all maven calls
+    required: false
+  github-token:
+    description: GITHUB_TOKEN secret
+    required: true
+
+runs:
+  using: composite
+
+  steps:
+    - name: Checkout code
+      uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6
+
+    - name: Setup JDK
+      uses: actions/setup-java@be666c2fcd27ec809703dec50e508c2fdc7f6654 # v5
+      with:
+        distribution: ${{ inputs.java-distribution }}
+        java-version: ${{ inputs.java-version }}
+        cache: maven
+
+    - name: Build and verify
+      run: ${{ inputs.maven-executable }} ${{ inputs.maven-verify-args }} ${{ inputs.maven-additional-args }}
+      shell: bash
