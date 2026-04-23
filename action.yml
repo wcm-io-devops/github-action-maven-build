@@ -20,9 +20,6 @@ inputs:
   maven-additional-args:
     description: Additional maven goals or command line parameters to be added to all maven calls
     required: false
-  github-token:
-    description: GITHUB_TOKEN secret
-    required: true
 
 runs:
   using: composite
